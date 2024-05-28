@@ -166,7 +166,7 @@ def Insert_pole():
             field_names = list(out_dict[0].keys())
             #-print( 'path', os.path.join(dir_path, path))
             split_txt = os.path.join(dir_path, path).split('\\')
-            name_text = split_txt[-1].split('-')
+            name_text = split_txt[-1].split('.')
             #-print( 'Split', split_txt)
             file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out\\{name_text[0]}-out.csv'
             completeName  = os.path.join(file_save)
