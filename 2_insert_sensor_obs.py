@@ -150,7 +150,7 @@ def Insert_sensor():
 
                     num_row += 1
                         
-                    break
+                    # break  ## for one camera
 
                 print("-------- dt_count = %d" % dt_count)
             field_names = list(out_dict[0].keys())

@@ -159,7 +159,7 @@ def Insert_pole():
                         
                     i = i+1
                     
-                    break  ## Test one camera
+                    # break  ## Test one camera
                 
                 print("-------- thing count = %d" % count) #run for end and show
 
