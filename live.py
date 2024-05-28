@@ -25,12 +25,12 @@ for path in os.listdir(dir_path):  #path
         for i in range (len(data)):
             datastream = data._get_value(i,'DATASTREAM_ID (Live)')
             name = data._get_value(i,'CAMERA_NAME')
-            pole_name = data._get_value(i,'POLE_NAME')
-            description = data._get_value(i,'POLE_DESCRIPTION')
+            # pole_name = data._get_value(i,'POLE_NAME')
+            # description = data._get_value(i,'POLE_DESCRIPTION')
             port = data._get_value(i,'RTC_PORT')
             ip = data._get_value(i,'RTC_IP')
-            lon = data._get_value(i,'LON')
-            lat = data._get_value(i,'LAT')
+            # lon = data._get_value(i,'LON')
+            # lat = data._get_value(i,'LAT')
             
             link = f"http://{ip}:{port}/api/stream.m3u8?src={name}&mp4=flac" ## create link for play in vlc
             
@@ -41,9 +41,9 @@ for path in os.listdir(dir_path):  #path
             "resultType": "string",
             "Datastream":{"@iot.id":datastream}
             })
-            # response = requests.request("POST", url, headers=headers, data=payload)
+            response = requests.request("POST", url, headers=headers, data=payload)
             
-            # print(response)
-            #print (link)
+            print(response)
+            print (link)
 
 
