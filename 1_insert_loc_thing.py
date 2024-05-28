@@ -161,7 +161,7 @@ def Insert_pole():
                     
                     break  ## เช็คแอดกล้องตัวเดียว
                 
-                print("-------- thing count = %d" % count)
+                print("-------- thing count = %d" % count) #run for end and show
 
             field_names = list(out_dict[0].keys())
             #-print( 'path', os.path.join(dir_path, path))
