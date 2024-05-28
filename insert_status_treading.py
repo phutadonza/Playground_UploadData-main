@@ -13,46 +13,46 @@ headers = {
             'Content-Type': 'application/json'      
         }
 
-def Live():
+# def Live():
     
-    file= "Camera-SB-list.csv"
-    filter = file.split("-")
-    data = pd.read_csv(r"Camera-SB-list.csv")
-    live = read_js.get_js("RTSP-Live") #RTSP-Live 
+#     file= "Camera-SB-list.csv"
+#     filter = file.split("-")
+#     data = pd.read_csv(r"Camera-SB-list.csv")
+#     live = read_js.get_js("RTSP-Live") #RTSP-Live 
 
-    url = f"{SERVER}/core/api/streaming/v1.1/ObservedProperties({live[0]})/Datastreams?&$expand=Sensor,Thing&$top=10000&name=*{filter[1]}*"
+#     url = f"{SERVER}/core/api/streaming/v1.1/ObservedProperties({live[0]})/Datastreams?&$expand=Sensor,Thing&$top=10000&name=*{filter[1]}*"
     
-    response = requests.get(url,headers=headers)
-    response_json = response.json()
+#     response = requests.get(url,headers=headers)
+#     response_json = response.json()
 
-    print(response_json["@iot.count"])
+#     print(response_json["@iot.count"])
 
-    for i in  range (len(response_json["value"])):
-        for j in range (len(data)):
-            if response_json["value"][i]["Sensor"]["name"] == data._get_value(j,'CAMERA_NAME'): 
-                while True:
-                    datastream = response_json["value"][i]["@iot.id"]
-                    # datastream = data._get_value(j,'POLE_NAME')
-                    name = response_json["value"][i]["Sensor"]["name"]
-                    port = data._get_value(j,'RTC_PORT')
-                    ip = data._get_value(j,'RTC_IP')
-                    #print(i,response_json["value"][i]["name"],ip,port)
+#     for i in  range (len(response_json["value"])):
+#         for j in range (len(data)):
+#             if response_json["value"][i]["Sensor"]["name"] == data._get_value(j,'CAMERA_NAME'): 
+#                 while True:
+#                     datastream = response_json["value"][i]["@iot.id"]
+#                     # datastream = data._get_value(j,'POLE_NAME')
+#                     name = response_json["value"][i]["Sensor"]["name"]
+#                     port = data._get_value(j,'RTC_PORT')
+#                     ip = data._get_value(j,'RTC_IP')
+#                     #print(i,response_json["value"][i]["name"],ip,port)
 
-                    link = f"http://{ip}:{port}/api/stream.m3u8?src={name}mp4=flac"
+#                     link = f"http://{ip}:{port}/api/stream.m3u8?src={name}mp4=flac"
 
                         
-                    payload = json.dumps({
-                    "result" : link,
-                    "resultType": "string",
-                    "Datastream":{"@iot.id":datastream},
-                    })
-                    url_post = "https://cctv2.naimueang.com/core/api/streaming/v1.1/Observations"
-                    response = requests.request("POST", url_post, headers=headers, data=payload)
+#                     payload = json.dumps({
+#                     "result" : link,
+#                     "resultType": "string",
+#                     "Datastream":{"@iot.id":datastream},
+#                     })
+#                     url_post = "https://cctv2.naimueang.com/core/api/streaming/v1.1/Observations"
+#                     response = requests.request("POST", url_post, headers=headers, data=payload)
 
-                    print(i,live[1],link,"//",response.status_code)
+#                     print(i,live[1],link,"//",response.status_code)
 
-                    if response.status_code == 201:
-                        break
+#                     if response.status_code == 201:
+#                         break
        
 def NVR():
     #nvr = "6502b553692d9156bfda65f1"
