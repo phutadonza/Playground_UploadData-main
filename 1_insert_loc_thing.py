@@ -111,7 +111,7 @@ headers = {
 def Insert_pole():
     for path in os.listdir(dir_path):  #path
         if os.path.isfile(os.path.join(dir_path, path)):
-            print('test',os.path.join(dir_path, path))
+            print('test',os.path.join(dir_path, path)) #ไว้เช็ค path
 
             out_dict = []   #CSV
             with open( os.path.join(dir_path, path) , encoding='utf-8') as csv_file:
@@ -159,7 +159,7 @@ def Insert_pole():
                         
                     i = i+1
                     
-                    break  ## เช็คแอดกล้องตัวเดียว
+                    break  ## Test one camera
                 
                 print("-------- thing count = %d" % count) #run for end and show
 
