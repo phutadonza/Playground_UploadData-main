@@ -1,7 +1,7 @@
 import json
 
 def get_js (name_obs):
-    f = open(r'C:\Users\Dell\Desktop\CCTV\Treading\cctv2-observedProp.json')
+    f = open(r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\cctv2-observedProp.json')
 
     data = json.load(f)
 
