@@ -7,7 +7,7 @@ import read_js
 import os
 
 
-dir_path = r'C:\\Users\\Dell\\Desktop\\CCTV\\Treading\\CSV\\CCTV-dt\\'
+dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out-dt'
 
 
 for path in os.listdir(dir_path):  #path
@@ -41,9 +41,9 @@ for path in os.listdir(dir_path):  #path
             "resultType": "string",
             "Datastream":{"@iot.id":datastream}
             })
-            response = requests.request("POST", url, headers=headers, data=payload)
+            # response = requests.request("POST", url, headers=headers, data=payload)
             
-            print(response)
+            # print(response)
             #print (link)
 
 
