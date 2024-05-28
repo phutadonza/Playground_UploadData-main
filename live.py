@@ -32,7 +32,7 @@ for path in os.listdir(dir_path):  #path
             lon = data._get_value(i,'LON')
             lat = data._get_value(i,'LAT')
             
-            link = f"http://{ip}:{port}/api/stream.m3u8?src={name}&mp4=flac"
+            link = f"http://{ip}:{port}/api/stream.m3u8?src={name}&mp4=flac" ## create link for play in vlc
             
             print(i,link)
             
