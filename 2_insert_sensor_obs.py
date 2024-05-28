@@ -158,7 +158,7 @@ def Insert_sensor():
             split_txt = os.path.join(dir_path, path).split('\\')
             name_text = split_txt[-1].split('.')
             #print(name_text)
-            file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out-dt\\{name_text[0]}dt.csv' ##
+            file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out-dt\\{name_text[0]}-dt.csv' ##
 
             with open(file_save, 'w', encoding='utf-8') as csvfile:      
                 writer = csv.DictWriter(csvfile, fieldnames = field_names)
