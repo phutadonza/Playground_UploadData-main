@@ -6,7 +6,7 @@ import threading
 from host.server import SERVER
 from host.api import API
 import os
-from insert_status_treading import Insert_status
+# from insert_status_treading import Insert_status ## not use
 
 def createSensor(cctvDetail,headers):
     
