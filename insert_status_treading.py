@@ -59,6 +59,7 @@ headers = {
 def NVR():
     #nvr = "6502b553692d9156bfda65f1"
     nvr = read_js.get_js("NVR-Status") # NVR-Statu
+    # print(nvr)
     url = f"{SERVER}/core/api/streaming/v1.1/ObservedProperties({nvr[0]})/Datastreams?$top=10000"
     res1 = requests.get(url,headers=headers).json()
     
