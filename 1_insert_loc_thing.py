@@ -101,9 +101,9 @@ def createFeatureOfInterest(cctvDetail , headers):
 # /////////////////////////////////
 #dir_path = r'C:\\Users\\Administrator\\Desktop\\CCTV\\Treading\\CSV\\CCTV\\'
 
-dir_path = r'C:\\Users\\phuta\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV' #for edit at home
+# dir_path = r'C:\\Users\\phuta\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV' #for edit at home
 
-# dir_path = r'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV' 
+dir_path = r'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV' 
 
 headers = {
     'API-Key': API,
@@ -170,8 +170,8 @@ def Insert_pole():
             split_txt = os.path.join(dir_path, path).split('\\')
             name_text = split_txt[-1].split('.')
             #-print( 'Split', split_txt)
-            file_save = f'C:\\Users\\phuta\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out\\{name_text[0]}-out.csv' ## for edit at home
-            # file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out\\{name_text[0]}-out.csv'
+            # file_save = f'C:\\Users\\phuta\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out\\{name_text[0]}-out.csv' ## for edit at home
+            file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out\\{name_text[0]}-out.csv'
             completeName  = os.path.join(file_save)
             #print('completeName  ',completeName)
             with open( completeName  , 'w' ,encoding='utf-8') as csvfile:
