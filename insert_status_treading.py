@@ -8,10 +8,7 @@ import read_js
 import os
 
 
-headers = {
-            'API-Key':API,
-            'Content-Type': 'application/json'      
-        }
+
 
 # def Live():
     
@@ -53,12 +50,17 @@ headers = {
 
 #                     if response.status_code == 201:
 #                         break
+
+headers = {
+            'API-Key':API,
+            'Content-Type': 'application/json'      
+        }
        
 def NVR():
     #nvr = "6502b553692d9156bfda65f1"
     nvr = read_js.get_js("NVR-Status") # NVR-Statu
-    url = f"{SERVER}/core/api/streaming/v1.1/ObservedProperties({nvr[0]})/Datastreams?$top=10000&api_key=4fpxp8Qj8QmdhbHSTPCBHvzeF5avWVnfWIqRQQiYEoBzcVlLL2hnGZXa2VVdGLgp"
-    res1 = requests.get(url).json()
+    url = f"{SERVER}/core/api/streaming/v1.1/ObservedProperties({nvr[0]})/Datastreams?$top=10000"
+    res1 = requests.get(url,headers=headers).json()
     
     def InsertObsNVR(obs):
         
@@ -81,8 +83,8 @@ def NVR():
 def Hard_Disk():
     #disk = "6502b545692d9156bfda65f0"
     disk = read_js.get_js("Hard-Disk-Status") #RTSP-Live
-    url = f"{SERVER}/core/api/streaming/v1.1/ObservedProperties({disk[0]})/Datastreams?$top=10000&api_key=4fpxp8Qj8QmdhbHSTPCBHvzeF5avWVnfWIqRQQiYEoBzcVlLL2hnGZXa2VVdGLgp"
-    res1 = requests.get(url).json()
+    url = f"{SERVER}/core/api/streaming/v1.1/ObservedProperties({disk[0]})/Datastreams?$top=10000"
+    res1 = requests.get(url,headers=headers).json()
     
     def InsertObsHD(obs):
     
@@ -105,8 +107,8 @@ def Hard_Disk():
 def Camera():
     #camera = "6502b538692d9156bfda65ef"
     camera = read_js.get_js("Camera-Status")
-    url = f"{SERVER}/core/api/streaming/v1.1/ObservedProperties({camera[0]})/Datastreams?$top=10000&api_key=4fpxp8Qj8QmdhbHSTPCBHvzeF5avWVnfWIqRQQiYEoBzcVlLL2hnGZXa2VVdGLgp"
-    res1 = requests.get(url).json()
+    url = f"{SERVER}/core/api/streaming/v1.1/ObservedProperties({camera[0]})/Datastreams?$top=10000"
+    res1 = requests.get(url,headers=headers).json()
     
     def InsertObsCM(obs):
     
@@ -146,5 +148,6 @@ def Insert_status():
 
     print("ทำงานเสร็จสิ้น")
 
+Insert_status()
 
 
