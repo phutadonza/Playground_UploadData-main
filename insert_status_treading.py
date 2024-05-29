@@ -129,25 +129,25 @@ def Camera():
         print("Camera",i)
 
 
-def Insert_status():
+# def Insert_status():
 
-    # สร้าง Thread สำหรับแต่ละฟังก์ชัน
-    thread1 = threading.Thread(target=NVR)
-    thread2 = threading.Thread(target=Hard_Disk)
-    thread3 = threading.Thread(target=Camera)
+# สร้าง Thread สำหรับแต่ละฟังก์ชัน
+thread1 = threading.Thread(target=NVR)
+thread2 = threading.Thread(target=Hard_Disk)
+thread3 = threading.Thread(target=Camera)
 
-    # เริ่มการทำงานของแต่ละ Thread
-    thread1.start()
-    thread2.start()
-    thread3.start()
+# เริ่มการทำงานของแต่ละ Thread
+thread1.start()
+thread2.start()
+thread3.start()
 
-    # รอให้ทั้งสอง Thread ทำงานเสร็จ
-    thread1.join()
-    thread2.join()
-    thread3.join()
+# รอให้ทั้งสอง Thread ทำงานเสร็จ
+thread1.join()
+thread2.join()
+thread3.join()
 
-    print("ทำงานเสร็จสิ้น")
+print("ทำงานเสร็จสิ้น")
 
-Insert_status()
+
 
 
