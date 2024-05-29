@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import requests
 
 # ระบุไดเรกทอรีที่เก็บไฟล์ CSV
 dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
@@ -17,17 +18,28 @@ for file in csv_files:
 # รวมข้อมูลทั้งหมดเป็น DataFrame เดียว
 combined_df = pd.concat(dataframes, ignore_index=True)
 
-# ระบุไดเรกทอรีที่ต้องการบันทึกไฟล์ใหม่
-output_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\test'
+# URL ของ API
+api_url = "https://rtc-mie.i-bitz.world/api/streams"
 
-# ตรวจสอบว่าไดเรกทอรีที่ต้องการบันทึกไฟล์ใหม่มีอยู่แล้วหรือไม่ ถ้าไม่มีให้สร้างใหม่
-if not os.path.exists(output_dir):
-    os.makedirs(output_dir)
+# ส่งข้อมูลไปยัง API สำหรับแต่ละแถวใน DataFrame
+for index, row in combined_df.iterrows():
+    name = row['CAMERA_NAME']
+    src = row['NVR RTSP MAIN']
+    
+    # แปลง & เป็น %26
+    src_encoded = src.replace("&", "%26")
+    src_encoded='ffmpeg:'+src_encoded
+    # สร้าง URL สำหรับแต่ละแถว
+    url = f"{api_url}?name={name}&src={src_encoded}"
+    
+    # ส่ง PUT request ไปยัง URL
+    response = requests.put(url)
+    
+    # ตรวจสอบสถานะการตอบสนอง
+    if response.status_code == 200:
+        print(f"Success for index {name}")
+    else:
+        print(f"Error for index {index}: {response.status_code}")
 
-# ระบุชื่อไฟล์และเส้นทางสำหรับไฟล์ใหม่
-output_file = os.path.join(output_dir, 'combined_data.csv')
-
-# บันทึก DataFrame เป็นไฟล์ CSV
-combined_df.to_csv(output_file, index=False)
-
-print(f'ข้อมูลถูกบันทึกที่: {output_file}')
+# แสดงผล DataFrame รวม
+print(combined_df)
