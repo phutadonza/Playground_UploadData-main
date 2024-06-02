@@ -1,9 +1,10 @@
 import os
 import pandas as pd
-import requests
 
 # ระบุไดเรกทอรีที่เก็บไฟล์ CSV
 dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
+
+save_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\link'
 
 # สร้างรายการไฟล์ CSV ทั้งหมดในไดเรกทอรี
 csv_files = [f for f in os.listdir(dir_path) if f.endswith('.csv')]
@@ -18,28 +19,15 @@ for file in csv_files:
 # รวมข้อมูลทั้งหมดเป็น DataFrame เดียว
 combined_df = pd.concat(dataframes, ignore_index=True)
 
-# URL ของ API
-api_url = "https://rtc-mie.i-bitz.world/api/streams"
+# สร้างคอลัมน์ใหม่สำหรับ src_encoded
+combined_df['NVR RTSP MAIN ENCODED'] = combined_df['NVR RTSP MAIN'].apply(lambda x: 'ffmpeg:' + x.replace("&", "%26"))
 
-# ส่งข้อมูลไปยัง API สำหรับแต่ละแถวใน DataFrame
-for index, row in combined_df.iterrows():
-    name = row['CAMERA_NAME']
-    src = row['NVR RTSP MAIN']
-    
-    # แปลง & เป็น %26
-    src_encoded = src.replace("&", "%26")
-    src_encoded='ffmpeg:'+src_encoded
-    # สร้าง URL สำหรับแต่ละแถว
-    url = f"{api_url}?name={name}&src={src_encoded}"
-    
-    # ส่ง PUT request ไปยัง URL
-    response = requests.put(url)
-    
-    # ตรวจสอบสถานะการตอบสนอง
-    if response.status_code == 200:
-        print(f"Success for index {name}")
-    else:
-        print(f"Error for index {index}: {response.status_code}")
+# บันทึกข้อมูลลงในไฟล์ txt
+txt_file_path = os.path.join(save_path, 'encoded_urls.txt')
+with open(txt_file_path, 'w') as file:
+    for index, row in combined_df.iterrows():
+        file.write(f"  {row['CAMERA_NAME']}: {row['NVR RTSP MAIN ENCODED']}\n")
+
 
 # แสดงผล DataFrame รวม
 print(combined_df)
