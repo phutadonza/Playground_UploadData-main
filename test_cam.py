@@ -12,7 +12,7 @@ def test_camera_links(directory):
             reader = csv.DictReader(file)
             
             for row in reader:
-                link = row.get('NVR RTSP MAIN')
+                link = row.get('NVR RTSP MAIN SUB')
                 if link:
                     try:
                         # Run VLC with the link
@@ -31,7 +31,7 @@ def test_camera_links(directory):
     return results
 
 # Specify the directory path where CSV files are located
-directory = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
+directory = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CAM-test'
 results = test_camera_links(directory)
 
 # Print the results
