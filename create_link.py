@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 # ระบุไดเรกทอรีที่เก็บไฟล์ CSV
-dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
+dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out-dt'
 
 save_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\link'
 
@@ -26,7 +26,7 @@ combined_df['NVR RTSP MAIN ENCODED'] = combined_df['NVR RTSP MAIN'].apply(lambda
 txt_file_path = os.path.join(save_path, 'encoded_urls.txt')
 with open(txt_file_path, 'w') as file:
     for index, row in combined_df.iterrows():
-        file.write(f"  {row['CAMERA_NAME']}: {row['NVR RTSP MAIN ENCODED']}\n")
+        file.write(f"    {row['CAMERA_NAME']}: {row['NVR RTSP MAIN ENCODED']}\n")
 
 
 # แสดงผล DataFrame รวม
