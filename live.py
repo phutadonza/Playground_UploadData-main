@@ -28,13 +28,14 @@ for path in os.listdir(dir_path):  #path
             name = data._get_value(i,'CAMERA_NAME')
             # pole_name = data._get_value(i,'POLE_NAME')
             # description = data._get_value(i,'POLE_DESCRIPTION')
-            port = data._get_value(i,'RTC_PORT')
-            ip = data._get_value(i,'RTC_IP')
+            # port = data._get_value(i,'RTC_PORT')
+            # ip = data._get_value(i,'RTC_IP')
             # lon = data._get_value(i,'LON')
             # lat = data._get_value(i,'LAT')
             
-            link = f"http://{ip}:{port}/api/stream.m3u8?src={name}&mp4=flac" ## create link for play in vlc
-            # https://rtc-mie.i-bitz.world/api/stream.m3u8?src=CM1-SW-040-C01&mp4=flac
+            # link = f"http://{ip}:{port}/api/stream.m3u8?src={name}&mp4=flac" ## create link for play in vlc
+            link = f"https://rtc-bkk-bma-ba-2-165.larry-cctv.com/api/stream.mp4?src={name}&mp4=flac" ## create link for play in vlc
+            
             print(i,link)
             
             payload = json.dumps({
@@ -42,6 +43,7 @@ for path in os.listdir(dir_path):  #path
             "resultType": "string",
             "Datastream":{"@iot.id":datastream}
             })
+            # print(datastream,name)
             response = requests.request("POST", url, headers=headers, data=payload)
             
             print(response)
