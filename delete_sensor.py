@@ -12,7 +12,7 @@ headers = {
     }
 
 # URL เพื่อดึงข้อมูล Location ทั้งหมด
-sensor_url = f"{SERVER}/core/api/streaming/v1.1/Sensors?$top=150&$orderby=id%20desc"
+sensor_url = f"{SERVER}/core/api/streaming/v1.1/Sensors?$top=10000&$orderby=id%20desc"
 
 # ส่งคำขอ GET เพื่อดึงข้อมูล Location ทั้งหมด
 response = requests.get(sensor_url, headers=headers)
