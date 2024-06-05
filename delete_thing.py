@@ -9,7 +9,7 @@ headers = {
     'Content-Type': 'application/json'
     }
 
-thing_url = f'{SERVER}/core/api/streaming/v1.1/Things?$top=150&$orderby=id%20desc' 
+thing_url = f'{SERVER}/core/api/streaming/v1.1/Things?$top=10000&$orderby=id%20desc' 
 response = requests.get(thing_url,headers=headers)
 
 if response.status_code == 200:
