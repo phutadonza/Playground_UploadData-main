@@ -15,8 +15,8 @@ for file in csv_files:
     df = pd.read_csv(file_path)
     df_selected = df[['CAMERA_NAME', 'NVR RTSP MAIN']]
     
-    # สร้างคอลัมน์ใหม่สำหรับ src_encoded
-    df_selected['NVR RTSP MAIN ENCODED'] = df_selected['NVR RTSP MAIN'].apply(lambda x: 'ffmpeg:' + x.replace("&", "%26"))
+    # สร้างคอลัมน์ใหม่สำหรับ src_encoded โดยไม่แปลงสัญลักษณ์ &
+    df_selected['NVR RTSP MAIN ENCODED'] = 'ffmpeg:' + df_selected['NVR RTSP MAIN']
     
     # สร้างชื่อไฟล์ที่เซฟตามไฟล์ที่อ่านและต่อท้ายด้วย -link
     txt_file_name = os.path.splitext(file)[0] + '-link.txt'
