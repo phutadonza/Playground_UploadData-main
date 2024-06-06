@@ -1,3 +1,5 @@
+## ตั้งแต่กล้อง CM3-SS-025-C02 ไม่มี sensor ค่อยกลับมาแก้
+
 import csv
 import requests
 import json
