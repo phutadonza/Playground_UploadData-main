@@ -1,0 +1,3 @@
+    CB-PY-28-C1: ffmpeg:rtsp://admin:Centralbkk001@10.93.41.18:554/Streaming/channels/101
+    CB-PY-28-C2: ffmpeg:rtsp://admin:Centralbkk001@10.93.41.18:554/Streaming/channels/201
+    CB-PY-28-C3: ffmpeg:rtsp://admin:Centralbkk001@10.93.41.18:554/Streaming/channels/301
