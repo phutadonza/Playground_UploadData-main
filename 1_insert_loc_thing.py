@@ -8,7 +8,7 @@ import os
 import time
 import pandas as pd
 
-# Set Server in File host
+# ตั้งค่าพารามิเตอร์พื้นฐาน
 top = 10000
 skip = 0
 things_count = 10539
@@ -16,71 +16,74 @@ output_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV
 output_file = os.path.join(output_dir, 'things_data.csv')
 compare_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
 check_before_up_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CHECK BEFORE UP'
+dir_path = r'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV'
 
+# ตั้งค่า headers สำหรับ API
 headers = {
     'API-Key': API,
     'Content-Type': 'application/json'
 }
 
-# Function to get data from API
+# ฟังก์ชันสำหรับดึงข้อมูลจาก API
 def get_things_data(skip, top):
     url = f"{SERVER}/core/api/streaming/v1.1/Things?api_key={API}&$skip={skip}&$top={top}"
     response = requests.get(url)
     return response.json()
 
-# Retrieve things data and save to CSV
+# ฟังก์ชันสำหรับดึงข้อมูล things และบันทึกลงไฟล์ CSV
 def fetch_things_data():
     global skip
     with open(output_file, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
-        writer.writerow(['iot.id', 'name'])  # Write header
+        writer.writerow(['iot.id', 'name'])  # เขียน header
 
         while skip < things_count:
-            data = get_things_data(skip, top)
+            data = get_things_data(skip, top)  # ดึงข้อมูลจาก API
             for item in data['value']:
                 writer.writerow([item['@iot.id'], item['name']])
             skip += top
-            time.sleep(1)  # Delay for 1 second to avoid overloading the server
+            time.sleep(1)  # ดีเลย์ 1 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
 
     print(f"Data has been written to {output_file}")
 
-# Function to check for matching names
+# ฟังก์ชันสำหรับตรวจสอบชื่อ POLE ที่ซ้ำกัน
 def check_matching_names(things_df, compare_dir):
     matches = []
 
-    # Read all CSV files in compare_dir
+    # อ่านไฟล์ CSV ทั้งหมดในไดเรกทอรี compare_dir
     comparison_files = [f for f in os.listdir(compare_dir) if f.endswith('.csv')]
 
     for comp_file in comparison_files:
         comp_file_path = os.path.join(compare_dir, comp_file)
         comp_df = pd.read_csv(comp_file_path)
 
-        # Check for matching names
+        # ตรวจสอบชื่อ POLE ที่ซ้ำกัน
         for thing_name in things_df['name']:
             if thing_name in comp_df['POLE_NAME'].values:
                 matches.append((thing_name, comp_file))
 
     return matches
 
-# Fetch things data
+# ดึงข้อมูล things
 fetch_things_data()
 
-# Read things data
+# อ่านข้อมูล things ที่ดึงมา
 things_df = pd.read_csv(output_file)
 
-# Check for matching names and handle results
+# ตรวจสอบชื่อ POLE ที่ซ้ำกันและจัดการผลลัพธ์
 matches = check_matching_names(things_df, compare_dir)
 
-# Save matches to new CSV file in CHECK BEFORE UP directory
+# บันทึกข้อมูลที่ซ้ำกันลงในไฟล์ CSV ในไดเรกทอรี CHECK BEFORE UP
 if matches:
-    match_file_path = os.path.join(check_before_up_dir, 'matched_pole_names.csv')
+    match_file_path = os.path.join(check_before_up_dir, 'poleซ้ำกล้องไม่แอด.csv')
     with open(match_file_path, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
-        writer.writerow(['POLE_NAME', 'File'])  # Write header
+        writer.writerow(['POLE_NAME', 'File'])  # เขียน header
         for match in matches:
             writer.writerow(match)
     print(f"Matches have been saved to {match_file_path}")
 
+# ฟังก์ชันสำหรับสร้าง Location
 def createLocation(cctvDetail, headers):
     url = f"{SERVER}/core/api/streaming/v1.1/Locations"
     payload = json.dumps({
@@ -105,8 +108,10 @@ def createLocation(cctvDetail, headers):
             continue 
     res_json = response.json()
     cctvDetail["LOCATION_ID"] = res_json["@iot.id"]
+    time.sleep(1)  # ดีเลย์ 1 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
     return cctvDetail
 
+# ฟังก์ชันสำหรับสร้าง Thing
 def createThing(cctvDetail, location_id , headers):
     url = f"{SERVER}/core/api/streaming/v1.1/Things"
     payload = json.dumps({
@@ -133,8 +138,10 @@ def createThing(cctvDetail, location_id , headers):
             continue
     res_json = response.json()
     cctvDetail["THING_ID"] = res_json["@iot.id"]
+    time.sleep(1)  # ดีเลย์ 1 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
     return cctvDetail
 
+# ฟังก์ชันสำหรับสร้าง FeatureOfInterest
 def createFeatureOfInterest(cctvDetail , headers):
     url = f"{SERVER}/core/api/streaming/v1.1/FeaturesOfInterest"
     payload = json.dumps({
@@ -151,7 +158,7 @@ def createFeatureOfInterest(cctvDetail , headers):
     })
     while True:
         response = requests.request("POST", url, headers=headers, data=payload)
-        if (response.status_code == 201):
+        if response.status_code == 201:
             print("success with 201")
             break
         else:
@@ -160,14 +167,14 @@ def createFeatureOfInterest(cctvDetail , headers):
     res_json = response.json()
     print('vale form createFeatureOfInterest == ', res_json)
     cctvDetail["FEATUREOFINTEREST_ID"] = res_json["@iot.id"]
+    time.sleep(1)  # ดีเลย์ 1 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
     return cctvDetail
 
-dir_path = r'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV'
-
+# ฟังก์ชันสำหรับเพิ่มข้อมูล POLE
 def Insert_pole():
-    for path in os.listdir(dir_path):  #path
+    for path in os.listdir(dir_path):  # path ของไฟล์ CSV
         if os.path.isfile(os.path.join(dir_path, path)):
-            print('test', os.path.join(dir_path, path))  # ไว้เช็ค path
+            print('test', os.path.join(dir_path, path))  # ตรวจสอบ path
 
             out_dict = []  # CSV
             with open(os.path.join(dir_path, path), encoding='utf-8') as csv_file:
@@ -184,27 +191,27 @@ def Insert_pole():
                     if row['POLE_NAME'] != prev_name:
                         prev_name = row['POLE_NAME']
 
-                        # Check if POLE_NAME exists in things data
+                        # ตรวจสอบว่าชื่อ POLE_NAME มีอยู่ใน things data หรือไม่
                         if row['POLE_NAME'] in things_df['name'].values:
-                            # Save to CHECK BEFORE UP directory
-                            match_file_path = os.path.join(check_before_up_dir, 'duplicates.csv')
+                            # บันทึกข้อมูลที่ซ้ำกันลงในไฟล์ CSV
+                            match_file_path = os.path.join(check_before_up_dir, 'poleซ้ำกล้องไม่แอด.csv')
                             with open(match_file_path, mode='a', newline='', encoding='utf-8') as file:
                                 writer = csv.writer(file)
                                 if os.path.getsize(match_file_path) == 0:
-                                    writer.writerow(['POLE_NAME', 'LON', 'LAT'])  # Write header if file is empty
+                                    writer.writerow(['POLE_NAME', 'LON', 'LAT'])  # เขียน header ถ้าไฟล์ว่าง
                                 writer.writerow([row['POLE_NAME'], row['LON'], row['LAT']])
                             print(f"Duplicate found: {row['POLE_NAME']} not added.")
                             continue
 
-                        # Create location
+                        # สร้าง location
                         out = createLocation(row, headers)
                         locationid = out['LOCATION_ID']
 
-                        # Create thing
+                        # สร้าง thing
                         out = createThing(out, locationid, headers)
                         thingid = out["THING_ID"]
 
-                        # Create feature of interest
+                        # สร้าง feature of interest
                         out = createFeatureOfInterest(out, headers)
                         featureid = out["FEATUREOFINTEREST_ID"]
 
@@ -217,8 +224,9 @@ def Insert_pole():
                         out_dict[i-1]["FEATUREOFINTEREST_ID"] = featureid
                         
                     i += 1
+                    time.sleep(1)  # ดีเลย์ 1 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
                 
-                print("-------- thing count = %d" % count)  # Run for end and show
+                print("-------- thing count = %d" % count)  # แสดงจำนวน things
 
             field_names = list(out_dict[0].keys())
             split_txt = os.path.join(dir_path, path).split('\\')
@@ -230,10 +238,10 @@ def Insert_pole():
                 writer.writeheader()
                 writer.writerows(out_dict)
 
-# สร้าง Thread สำหรับแต่ละฟังก์ชัน
+# สร้าง Thread สำหรับฟังก์ชัน Insert_pole
 thread1 = threading.Thread(target=Insert_pole)
 
-# เริ่มการทำงานของแต่ละ Thread
+# เริ่มการทำงานของ Thread
 thread1.start()
 
 # รอให้ Thread ทำงานเสร็จ
