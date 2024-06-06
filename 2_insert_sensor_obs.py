@@ -134,6 +134,7 @@ def Insert_sensor():
                     # print("----- row = ",row)
                     # break
                     # create sensor
+                    # print(row["POLE_NAME"],row["THING_ID"],row["CAMERA_NAME"])
                     sensorId = createSensor(row,headers)
                     row["SENSOR_ID"] = sensorId
                     
