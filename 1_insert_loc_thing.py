@@ -2,11 +2,12 @@ import csv
 import requests
 import json
 import threading
-from host.server import SERVER
-from host.api import API
 import os
 import time
 import pandas as pd
+from host.server import SERVER
+from host.api import API
+
 
 # ตั้งค่าพารามิเตอร์พื้นฐาน
 top = 10000
@@ -42,7 +43,7 @@ def fetch_things_data():
             for item in data['value']:
                 writer.writerow([item['@iot.id'], item['name']])
             skip += top
-            time.sleep(1)  # ดีเลย์ 1 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
+            time.sleep(2)  # เพิ่มดีเลย์เป็น 2 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
 
     print(f"Data has been written to {output_file}")
 
@@ -99,16 +100,21 @@ def createLocation(cctvDetail, headers):
         }
     })
     while True:
-        response = requests.request("POST", url, headers=headers, data=payload)
-        if response.status_code == 201:
-            print("success with 201")
-            break
-        else:
-            print("error occurred: %s" % response.text, response.json())
-            continue 
+        try:
+            response = requests.request("POST", url, headers=headers, data=payload)
+            if response.status_code == 201:
+                print("success with 201")
+                break
+            else:
+                print("error occurred: %s" % response.text)
+                time.sleep(5)  # เพิ่มดีเลย์เป็น 5 วินาทีในกรณีที่มีข้อผิดพลาด
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+            time.sleep(5)  # เพิ่มดีเลย์เป็น 5 วินาทีในกรณีที่เกิดข้อผิดพลาด
+
     res_json = response.json()
     cctvDetail["LOCATION_ID"] = res_json["@iot.id"]
-    time.sleep(1)  # ดีเลย์ 1 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
+    time.sleep(2)  # เพิ่มดีเลย์เป็น 2 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
     return cctvDetail
 
 # ฟังก์ชันสำหรับสร้าง Thing
@@ -129,16 +135,21 @@ def createThing(cctvDetail, location_id , headers):
     })
     print("----- json =", payload)
     while True:
-        response = requests.request("POST", url, headers=headers, data=payload)
-        if response.status_code == 201:
-            print("success with 201")
-            break
-        else:
-            print("error occurred: %s" % response.text, response.json())
-            continue
+        try:
+            response = requests.request("POST", url, headers=headers, data=payload)
+            if response.status_code == 201:
+                print("success with 201")
+                break
+            else:
+                print("error occurred: %s" % response.text)
+                time.sleep(5)  # เพิ่มดีเลย์เป็น 5 วินาทีในกรณีที่มีข้อผิดพลาด
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+            time.sleep(5)  # เพิ่มดีเลย์เป็น 5 วินาทีในกรณีที่เกิดข้อผิดพลาด
+
     res_json = response.json()
     cctvDetail["THING_ID"] = res_json["@iot.id"]
-    time.sleep(1)  # ดีเลย์ 1 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
+    time.sleep(2)  # เพิ่มดีเลย์เป็น 2 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
     return cctvDetail
 
 # ฟังก์ชันสำหรับสร้าง FeatureOfInterest
@@ -157,17 +168,22 @@ def createFeatureOfInterest(cctvDetail , headers):
         }
     })
     while True:
-        response = requests.request("POST", url, headers=headers, data=payload)
-        if response.status_code == 201:
-            print("success with 201")
-            break
-        else:
-            print("error occurred: %s" % response.text, response.json())
-            continue
+        try:
+            response = requests.request("POST", url, headers=headers, data=payload)
+            if response.status_code == 201:
+                print("success with 201")
+                break
+            else:
+                print("error occurred: %s" % response.text)
+                time.sleep(5)  # เพิ่มดีเลย์เป็น 5 วินาทีในกรณีที่มีข้อผิดพลาด
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+            time.sleep(5)  # เพิ่มดีเลย์เป็น 5 วินาทีในกรณีที่เกิดข้อผิดพลาด
+
     res_json = response.json()
     print('vale form createFeatureOfInterest == ', res_json)
     cctvDetail["FEATUREOFINTEREST_ID"] = res_json["@iot.id"]
-    time.sleep(1)  # ดีเลย์ 1 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
+    time.sleep(2)  # เพิ่มดีเลย์เป็น 2 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
     return cctvDetail
 
 # ฟังก์ชันสำหรับเพิ่มข้อมูล POLE
@@ -224,7 +240,7 @@ def Insert_pole():
                         out_dict[i-1]["FEATUREOFINTEREST_ID"] = featureid
                         
                     i += 1
-                    time.sleep(1)  # ดีเลย์ 1 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
+                    time.sleep(2)  # เพิ่มดีเลย์เป็น 2 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
                 
                 print("-------- thing count = %d" % count)  # แสดงจำนวน things
 
