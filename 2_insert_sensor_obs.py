@@ -184,3 +184,4 @@ thread1.start()
 thread1.join()
 
 print("ทำงานเสร็จสิ้น")
+
