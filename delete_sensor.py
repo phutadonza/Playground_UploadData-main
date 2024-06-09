@@ -63,3 +63,4 @@ thread.start()
 thread.join()
 
 print("ลบเซ็นเซอร์ทั้งหมดเรียบร้อยแล้ว")
+
