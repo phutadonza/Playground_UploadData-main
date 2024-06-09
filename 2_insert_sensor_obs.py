@@ -103,12 +103,12 @@ def createDatastream(dtDetail,headers):
     return res_json["@iot.id"]
 
 
-# dir_path = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out' # for edit at home
-# dir_json = r'C:\Users\phuta\Desktop\Playground_UploadData-main\cctv2-observedProp.json' # for edit at home
+dir_path = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out' # for edit at home
+dir_json = r'C:\Users\phuta\Desktop\Playground_UploadData-main\cctv2-observedProp.json' # for edit at home
 
 
-dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out' ##
-dir_json = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\cctv2-observedProp.json' ##
+# dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out' ##
+# dir_json = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\cctv2-observedProp.json' ##
 
 headers = {
     'API-Key': API,
@@ -164,8 +164,8 @@ def Insert_sensor():
             split_txt = os.path.join(dir_path, path).split('\\')
             name_text = split_txt[-1].split('.')
             #print(name_text)
-            # file_save = f'C:\\Users\\phuta\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out-dt\\{name_text[0]}-dt.csv' ## for edit at home
-            file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out-dt\\{name_text[0]}-dt.csv' ##
+            file_save = f'C:\\Users\\phuta\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out-dt\\{name_text[0]}-dt.csv' ## for edit at home
+            # file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out-dt\\{name_text[0]}-dt.csv' ##
 
             with open(file_save, 'w', encoding='utf-8') as csvfile:      
                 writer = csv.DictWriter(csvfile, fieldnames = field_names)
