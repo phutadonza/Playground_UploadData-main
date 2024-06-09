@@ -1,50 +1,65 @@
+import csv
 import requests
-from host.api import API
+import json
+import os
+import threading
 from host.server import SERVER
-# http://cctv.naimueang.com:30800/core/api/streaming/v1.1/Datastreams  ## ข้อมูลที่อยู่ใน sensor อีกที
-# /streaming/v1.1/Sensors(64673cc5b3045bdd556d0c9d)?forever=true
-# http://cctv.naimueang.com:30800/core/api/streaming/v1.1/Sensors?$top=150&$orderby=id%20desc
+from host.api import API
 
+def ค้นหาsensorId(รายละเอียด, headers):
+    url = f"{SERVER}/core/api/streaming/v1.1/Sensors?$filter=name eq '{รายละเอียด['CAMERA_NAME']}'"
+    response = requests.request("GET", url, headers=headers)
+    if response.status_code == 200:
+        results = response.json()
+        if results["value"]:
+            return results["value"][0]["@iot.id"]
+    print(f"ไม่พบเซ็นเซอร์สำหรับ {รายละเอียด['CAMERA_NAME']}")
+    return None
+
+def ลบเซ็นเซอร์(sensor_id, headers):
+    url = f"{SERVER}/core/api/streaming/v1.1/Sensors({sensor_id})"
+    
+    while True:
+        response = requests.request("DELETE", url, headers=headers)
+        if response.status_code == 200 or response.status_code == 204:
+            print(f"ลบเซ็นเซอร์ {sensor_id} เรียบร้อยแล้ว")
+            break
+        else:
+            print(f"เกิดข้อผิดพลาดขณะลบเซ็นเซอร์ {sensor_id}: {response.text}")
+            continue
+
+def ลบเซ็นเซอร์จากCSV(file_path, headers):
+    if os.path.isfile(file_path):
+        with open(file_path, encoding='utf-8') as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+            for row in csv_reader:
+                sensor_id = ค้นหาsensorId(row, headers)
+                if sensor_id:
+                    print(f"เซ็นเซอร์ที่จะลบ: {row['CAMERA_NAME']} (ID: {sensor_id})")
+                    confirm = input("พิมพ์ 'del' เพื่อยืนยันการลบ: ")
+                    if confirm.lower() == 'del':
+                        ลบเซ็นเซอร์(sensor_id, headers)
+                    else:
+                        print("ยกเลิกการลบเซ็นเซอร์นี้")
+
+# เส้นทางไปยังไฟล์ CSV ที่มีรายชื่อเซ็นเซอร์ที่ต้องการลบ
+csv_file_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out\ชื่อไฟล์ของคุณ.csv'
 
 headers = {
     'API-Key': API,
     'Content-Type': 'application/json'
-    }
+}
 
-# URL เพื่อดึงข้อมูล Location ทั้งหมด
-sensor_url = f"{SERVER}/core/api/streaming/v1.1/Sensors?$top=10000&$orderby=id%20desc"
+def งานลบเซ็นเซอร์():
+    ลบเซ็นเซอร์จากCSV(csv_file_path, headers)
 
-# ส่งคำขอ GET เพื่อดึงข้อมูล Location ทั้งหมด
-response = requests.get(sensor_url, headers=headers)
+# สร้างเธรดสำหรับงานลบเซ็นเซอร์
+thread = threading.Thread(target=งานลบเซ็นเซอร์)
 
-# ตรวจสอบว่าคำขอ GET สำเร็จหรือไม่
-if response.status_code == 200:
-    # แปลงการตอบสนอง JSON
-    # print(response.json()) ## test debug
+# เริ่มเธรด
+thread.start()
 
-    sensor_data = response.json()
-    
-    # ตรวจสอบว่ามีคีย์ 'value' ในข้อมูลการตอบสนองหรือไม่
-    if 'value' in sensor_data:
-        # วนลูปผ่าน Location แต่ละรายการและดึงค่า @iot.id
-        for sensor in sensor_data['value']:
-            sensor_id = sensor.get('@iot.id')
-            # print(sensor_id) ## test debug 
-            
-            if sensor_id:
-                # สร้าง URL สำหรับคำขอ DELETE
-                delete_url = f"{SERVER}/core/api/streaming/v1.1/Sensors({sensor_id})?forever=true"
-                
-                # ส่งคำขอ DELETE
-                delete_response = requests.delete(delete_url, headers=headers)
-                # print(delete_response.json()) ## test debug with get
+# รอให้เธรดทำงานเสร็จ
+thread.join()
 
-                # แสดงผลลัพธ์ของคำขอ DELETE
-                if delete_response.status_code == 204:
-                    print(f"ลบ Sensor ที่มี ID: {sensor_id} สำเร็จ")
-                else:
-                    print(f"ลบ Sensor ที่มี ID: {sensor_id} ไม่สำเร็จ รหัสสถานะ: {delete_response.status_code}")
-    else:
-        print("ไม่พบ Sensor ในการตอบสนอง")
-else:
-    print(f"การดึงข้อมูล Sensor ไม่สำเร็จ รหัสสถานะ: {response.status_code}")
+print("ลบเซ็นเซอร์ทั้งหมดเรียบร้อยแล้ว")
