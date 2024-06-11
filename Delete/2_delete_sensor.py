@@ -3,8 +3,8 @@ import requests
 import json
 import os
 import threading
-from host.server import SERVER
-from host.api import API
+SERVER = 'http://cctv.naimueang.com:30800'
+API = 'a4pddFpUwhZ0We6ILSQcFWd1w0LiUoHqc8kFXKgrZY615fjLXJpvHpaZXldIj0QW'
 
 def ค้นหาsensorId(รายละเอียด, headers):
     url = f"{SERVER}/core/api/streaming/v1.1/Sensors?name={รายละเอียด['CAMERA_NAME']}*"

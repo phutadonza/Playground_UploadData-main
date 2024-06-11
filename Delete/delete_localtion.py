@@ -1,8 +1,8 @@
 import requests
-from host.server import SERVER
-from host.api import API
 
 
+SERVER = 'http://cctv.naimueang.com:30800'
+API = 'a4pddFpUwhZ0We6ILSQcFWd1w0LiUoHqc8kFXKgrZY615fjLXJpvHpaZXldIj0QW'
 # METHOD "delete"
 
 # http://cctv.naimueang.com:30800/core/api/streaming/v1.1/Locations  ## ข้อมูลหัวข้อ Location

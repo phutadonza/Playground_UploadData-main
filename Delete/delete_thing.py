@@ -1,6 +1,6 @@
 import requests
-from host.api import API
-from host.server import SERVER
+SERVER = 'http://cctv.naimueang.com:30800'
+API = 'a4pddFpUwhZ0We6ILSQcFWd1w0LiUoHqc8kFXKgrZY615fjLXJpvHpaZXldIj0QW'
 # http://cctv.naimueang.com:30800/core/api/streaming/v1.1/Things(64702b2f5198e573b4dbf117)  ## ข้อมูลหัวข้อ Solution(Thing)
 # http://cctv.naimueang.com:30800/core/api/streaming/v1.1/Things?$top=150&$orderby=id%20desc
 
