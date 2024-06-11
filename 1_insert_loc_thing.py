@@ -5,29 +5,36 @@ import threading
 import os
 import time
 import pandas as pd
-from host.server import SERVER
-from host.api import API
+from dotenv import load_dotenv
+import os
+
+# โหลดค่า environment variables จากไฟล์ .env
+load_dotenv()
+
+# อ่านค่า environment variables
+API_REAL = os.getenv('API_REAL')
+SERVER_REAL = os.getenv('SERVER_REAL')
 
 
 # ตั้งค่าพารามิเตอร์พื้นฐาน
 top = 10000
 skip = 0
 things_count = 10539
-output_dir = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-all'
+output_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-all'
 output_file = os.path.join(output_dir, 'things_data.csv')
-compare_dir = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
-check_before_up_dir = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CHECK BEFORE UP'
-dir_path = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
+compare_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
+check_before_up_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CHECK BEFORE UP'
+dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
 
 # ตั้งค่า headers สำหรับ API
 headers = {
-    'API-Key': API,
+    'API-Key': API_REAL,
     'Content-Type': 'application/json'
 }
 
 # ฟังก์ชันสำหรับดึงข้อมูลจาก API
 def get_things_data(skip, top):
-    url = f"{SERVER}/core/api/streaming/v1.1/Things?api_key={API}&$skip={skip}&$top={top}"
+    url = f"{SERVER_REAL}/core/api/streaming/v1.1/Things?api_key={API_REAL}&$skip={skip}&$top={top}"
     response = requests.get(url)
     return response.json()
 
@@ -86,7 +93,7 @@ if matches:
 
 # ฟังก์ชันสำหรับสร้าง Location
 def createLocation(cctvDetail, headers):
-    url = f"{SERVER}/core/api/streaming/v1.1/Locations"
+    url = f"{SERVER_REAL}/core/api/streaming/v1.1/Locations"
     payload = json.dumps({
         "name": str(cctvDetail["POLE_NAME"]),
         "description": str(cctvDetail["POLE_DESCRIPTION"]),
@@ -119,7 +126,7 @@ def createLocation(cctvDetail, headers):
 
 # ฟังก์ชันสำหรับสร้าง Thing
 def createThing(cctvDetail, location_id , headers):
-    url = f"{SERVER}/core/api/streaming/v1.1/Things"
+    url = f"{SERVER_REAL}/core/api/streaming/v1.1/Things"
     payload = json.dumps({
         "name": str(cctvDetail["POLE_NAME"]),
         "description": str(cctvDetail["POLE_DESCRIPTION"]),
@@ -154,7 +161,7 @@ def createThing(cctvDetail, location_id , headers):
 
 # ฟังก์ชันสำหรับสร้าง FeatureOfInterest
 def createFeatureOfInterest(cctvDetail , headers):
-    url = f"{SERVER}/core/api/streaming/v1.1/FeaturesOfInterest"
+    url = f"{SERVER_REAL}/core/api/streaming/v1.1/FeaturesOfInterest"
     payload = json.dumps({
         "name": str(cctvDetail["POLE_NAME"]),
         "description": str(cctvDetail["POLE_DESCRIPTION"]),
@@ -247,7 +254,7 @@ def Insert_pole():
             field_names = list(out_dict[0].keys())
             split_txt = os.path.join(dir_path, path).split('\\')
             name_text = split_txt[-1].split('.')
-            file_save = f'C:\\Users\\phuta\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out\\{name_text[0]}(4)-out.csv'
+            file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out\\{name_text[0]}-out.csv'
             completeName = os.path.join(file_save)
             with open(completeName, 'w', encoding='utf-8') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=field_names)
