@@ -8,10 +8,10 @@ api_key = 'k3hqivYfUBAEE7BoL1745jQE4PGS0Vq8CL755gMen1tm1shTatHSkyilgi1YnGGa'
 base_url = 'https://bkk.larry-cctv.com/core/api/streaming/v1.1/Things'
 top = 10000
 skip = 0
-things_count = 10539
+things_count = 15000
 output_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-all'
 output_file = os.path.join(output_dir, 'things_data.csv')
-compare_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
+duplicates_file = os.path.join(output_dir, 'duplicates_data.csv')
 
 # Function to get data from API
 def get_things_data(skip, top):
@@ -36,19 +36,10 @@ print(f"Data has been written to {output_file}")
 # Read things data
 things_df = pd.read_csv(output_file)
 
-# Read all CSV files in compare_dir
-comparison_files = [f for f in os.listdir(compare_dir) if f.endswith('.csv')]
-matches = []
+# Check for duplicate names
+duplicate_names = things_df[things_df.duplicated('name', keep=False)]
 
-for comp_file in comparison_files:
-    comp_file_path = os.path.join(compare_dir, comp_file)
-    comp_df = pd.read_csv(comp_file_path)
-    
-    # Check for matching names
-    for thing_name in things_df['name']:
-        if thing_name in comp_df['POLE_NAME'].values:
-            matches.append((thing_name, comp_file))
+# Save duplicates to a new CSV file
+duplicate_names.to_csv(duplicates_file, index=False)
 
-# Print matches
-for match in matches:
-    print(f"Match found: {match[0]} in file {match[1]}")
+print(f"Duplicate data has been written to {duplicates_file}")
