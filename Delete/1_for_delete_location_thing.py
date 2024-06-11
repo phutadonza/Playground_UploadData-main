@@ -3,7 +3,7 @@ import requests
 import time
 
 # Path to your CSV file
-csv_file_path = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV\สำเนาของ NT_Camera ไม่ได้อัพ_จะอัพ - จะอัพ_8(3).csv'
+csv_file_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV\fixlo-1-2.csv'
 
 # API details
 api_url = 'https://bkk.larry-cctv.com/core/api/streaming/v1.1'  # Replace with your actual API endpoint
