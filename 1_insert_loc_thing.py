@@ -6,15 +6,15 @@ import os
 import time
 import pandas as pd
 from dotenv import load_dotenv
-import os
 
 # โหลดค่า environment variables จากไฟล์ .env
 load_dotenv()
 
 # อ่านค่า environment variables
-API_REAL = os.getenv('API_REAL')
-SERVER_REAL = os.getenv('SERVER_REAL')
+API_REAL = os.getenv('API_TEST')
+SERVER_REAL = os.getenv('SERVER_TEST')
 
+print(SERVER_REAL, API_REAL)
 
 # ตั้งค่าพารามิเตอร์พื้นฐาน
 top = 10000
@@ -50,7 +50,6 @@ def fetch_things_data():
             for item in data['value']:
                 writer.writerow([item['@iot.id'], item['name']])
             skip += top
-            time.sleep(2)  # เพิ่มดีเลย์เป็น 2 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
 
     print(f"Data has been written to {output_file}")
 
@@ -114,14 +113,11 @@ def createLocation(cctvDetail, headers):
                 break
             else:
                 print("error occurred: %s" % response.text)
-                time.sleep(5)  # เพิ่มดีเลย์เป็น 5 วินาทีในกรณีที่มีข้อผิดพลาด
         except Exception as e:
             print(f"Exception occurred: {e}")
-            time.sleep(5)  # เพิ่มดีเลย์เป็น 5 วินาทีในกรณีที่เกิดข้อผิดพลาด
 
     res_json = response.json()
     cctvDetail["LOCATION_ID"] = res_json["@iot.id"]
-    time.sleep(2)  # เพิ่มดีเลย์เป็น 2 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
     return cctvDetail
 
 # ฟังก์ชันสำหรับสร้าง Thing
@@ -149,14 +145,11 @@ def createThing(cctvDetail, location_id , headers):
                 break
             else:
                 print("error occurred: %s" % response.text)
-                time.sleep(5)  # เพิ่มดีเลย์เป็น 5 วินาทีในกรณีที่มีข้อผิดพลาด
         except Exception as e:
             print(f"Exception occurred: {e}")
-            time.sleep(5)  # เพิ่มดีเลย์เป็น 5 วินาทีในกรณีที่เกิดข้อผิดพลาด
 
     res_json = response.json()
     cctvDetail["THING_ID"] = res_json["@iot.id"]
-    time.sleep(2)  # เพิ่มดีเลย์เป็น 2 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
     return cctvDetail
 
 # ฟังก์ชันสำหรับสร้าง FeatureOfInterest
@@ -177,20 +170,17 @@ def createFeatureOfInterest(cctvDetail , headers):
     while True:
         try:
             response = requests.request("POST", url, headers=headers, data=payload)
-            if response.status_code == 201:
+            if (response.status_code == 201):
                 print("success with 201")
                 break
             else:
                 print("error occurred: %s" % response.text)
-                time.sleep(5)  # เพิ่มดีเลย์เป็น 5 วินาทีในกรณีที่มีข้อผิดพลาด
         except Exception as e:
             print(f"Exception occurred: {e}")
-            time.sleep(5)  # เพิ่มดีเลย์เป็น 5 วินาทีในกรณีที่เกิดข้อผิดพลาด
 
     res_json = response.json()
     print('vale form createFeatureOfInterest == ', res_json)
     cctvDetail["FEATUREOFINTEREST_ID"] = res_json["@iot.id"]
-    time.sleep(2)  # เพิ่มดีเลย์เป็น 2 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
     return cctvDetail
 
 # ฟังก์ชันสำหรับเพิ่มข้อมูล POLE
@@ -199,67 +189,72 @@ def Insert_pole():
         if os.path.isfile(os.path.join(dir_path, path)):
             print('test', os.path.join(dir_path, path))  # ตรวจสอบ path
 
-            out_dict = []  # CSV
-            with open(os.path.join(dir_path, path), encoding='utf-8') as csv_file:
-                csv_reader = csv.DictReader(csv_file)
-                count = 0
-                prev_name = ''
-                locationid = ''
-                thingid = ''
-                featureid = ''
-                i = 1
-                for row in csv_reader:
-                    print("----- i =", i)
-
-                    if row['POLE_NAME'] != prev_name:
-                        prev_name = row['POLE_NAME']
-
-                        # ตรวจสอบว่าชื่อ POLE_NAME มีอยู่ใน things data หรือไม่
-                        if row['POLE_NAME'] in things_df['name'].values:
-                            # บันทึกข้อมูลที่ซ้ำกันลงในไฟล์ CSV
-                            match_file_path = os.path.join(check_before_up_dir, 'poleซ้ำกล้องไม่แอด.csv')
-                            with open(match_file_path, mode='a', newline='', encoding='utf-8') as file:
-                                writer = csv.writer(file)
-                                if os.path.getsize(match_file_path) == 0:
-                                    writer.writerow(['POLE_NAME', 'LON', 'LAT'])  # เขียน header ถ้าไฟล์ว่าง
-                                writer.writerow([row['POLE_NAME'], row['LON'], row['LAT']])
-                            print(f"Duplicate found: {row['POLE_NAME']} not added.")
-                            continue
-
-                        # สร้าง location
-                        out = createLocation(row, headers)
-                        locationid = out['LOCATION_ID']
-
-                        # สร้าง thing
-                        out = createThing(out, locationid, headers)
-                        thingid = out["THING_ID"]
-
-                        # สร้าง feature of interest
-                        out = createFeatureOfInterest(out, headers)
-                        featureid = out["FEATUREOFINTEREST_ID"]
-
-                        out_dict.append(out)
-                        count += 1
-                    else:
-                        out_dict.append(row)
-                        out_dict[i-1]["LOCATION_ID"] = locationid
-                        out_dict[i-1]["THING_ID"] = thingid
-                        out_dict[i-1]["FEATUREOFINTEREST_ID"] = featureid
-                        
-                    i += 1
-                    time.sleep(2)  # เพิ่มดีเลย์เป็น 2 วินาทีเพื่อลดโหลดเซิร์ฟเวอร์
-                
-                print("-------- thing count = %d" % count)  # แสดงจำนวน things
-
-            field_names = list(out_dict[0].keys())
             split_txt = os.path.join(dir_path, path).split('\\')
             name_text = split_txt[-1].split('.')
             file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out\\{name_text[0]}-out.csv'
             completeName = os.path.join(file_save)
-            with open(completeName, 'w', encoding='utf-8') as csvfile:
-                writer = csv.DictWriter(csvfile, fieldnames=field_names)
-                writer.writeheader()
-                writer.writerows(out_dict)
+            
+            with open(completeName, 'w', encoding='utf-8', newline='') as output_csvfile:
+                field_names = None
+                writer = None
+                out_dict = []  # CSV
+                
+                with open(os.path.join(dir_path, path), encoding='utf-8') as csv_file:
+                    csv_reader = csv.DictReader(csv_file)
+                    count = 0
+                    prev_name = ''
+                    locationid = ''
+                    thingid = ''
+                    featureid = ''
+                    i = 1
+
+                    for row in csv_reader:
+                        print("----- i =", i)
+
+                        if row['POLE_NAME'] != prev_name:
+                            prev_name = row['POLE_NAME']
+
+                            # ตรวจสอบว่าชื่อ POLE_NAME มีอยู่ใน things data หรือไม่
+                            if row['POLE_NAME'] in things_df['name'].values:
+                                # บันทึกข้อมูลที่ซ้ำกันลงในไฟล์ CSV
+                                match_file_path = os.path.join(check_before_up_dir, 'poleซ้ำกล้องไม่แอด.csv')
+                                with open(match_file_path, mode='a', newline='', encoding='utf-8') as file:
+                                    match_writer = csv.writer(file)
+                                    if os.path.getsize(match_file_path) == 0:
+                                        match_writer.writerow(['POLE_NAME', 'LON', 'LAT'])  # เขียน header ถ้าไฟล์ว่าง
+                                    match_writer.writerow([row['POLE_NAME'], row['LON'], row['LAT']])
+                                print(f"Duplicate found: {row['POLE_NAME']} not added.")
+                                continue
+
+                            # สร้าง location
+                            out = createLocation(row, headers)
+                            locationid = out['LOCATION_ID']
+
+                            # สร้าง thing
+                            out = createThing(out, locationid, headers)
+                            thingid = out["THING_ID"]
+
+                            # สร้าง feature of interest
+                            out = createFeatureOfInterest(out, headers)
+                            featureid = out["FEATUREOFINTEREST_ID"]
+
+                            out_dict.append(out)
+                            count += 1
+                        else:
+                            out_dict.append(row)
+                            out_dict[i-1]["LOCATION_ID"] = locationid
+                            out_dict[i-1]["THING_ID"] = thingid
+                            out_dict[i-1]["FEATUREOFINTEREST_ID"] = featureid
+                        
+                        if field_names is None:
+                            field_names = list(out_dict[0].keys())
+                            writer = csv.DictWriter(output_csvfile, fieldnames=field_names)
+                            writer.writeheader()
+                        
+                        writer.writerow(out_dict[-1])
+                        i += 1
+                
+                print("-------- thing count = %d" % count)  # แสดงจำนวน things
 
 # สร้าง Thread สำหรับฟังก์ชัน Insert_pole
 thread1 = threading.Thread(target=Insert_pole)
