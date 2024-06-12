@@ -11,8 +11,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # อ่านค่า environment variables
-API_REAL = os.getenv('API_TEST')
-SERVER_REAL = os.getenv('SERVER_TEST')
+API_REAL = os.getenv('API_REAL')
+SERVER_REAL = os.getenv('SERVER_REAL')
 
 print(SERVER_REAL, API_REAL)
 
@@ -197,7 +197,6 @@ def Insert_pole():
             with open(completeName, 'w', encoding='utf-8', newline='') as output_csvfile:
                 field_names = None
                 writer = None
-                out_dict = []  # CSV
                 
                 with open(os.path.join(dir_path, path), encoding='utf-8') as csv_file:
                     csv_reader = csv.DictReader(csv_file)
@@ -238,20 +237,25 @@ def Insert_pole():
                             out = createFeatureOfInterest(out, headers)
                             featureid = out["FEATUREOFINTEREST_ID"]
 
-                            out_dict.append(out)
-                            count += 1
+                            row.update({
+                                "LOCATION_ID": locationid,
+                                "THING_ID": thingid,
+                                "FEATUREOFINTEREST_ID": featureid
+                            })
+
                         else:
-                            out_dict.append(row)
-                            out_dict[i-1]["LOCATION_ID"] = locationid
-                            out_dict[i-1]["THING_ID"] = thingid
-                            out_dict[i-1]["FEATUREOFINTEREST_ID"] = featureid
-                        
+                            row.update({
+                                "LOCATION_ID": locationid,
+                                "THING_ID": thingid,
+                                "FEATUREOFINTEREST_ID": featureid
+                            })
+
                         if field_names is None:
-                            field_names = list(out_dict[0].keys())
+                            field_names = row.keys()
                             writer = csv.DictWriter(output_csvfile, fieldnames=field_names)
                             writer.writeheader()
                         
-                        writer.writerow(out_dict[-1])
+                        writer.writerow(row)
                         i += 1
                 
                 print("-------- thing count = %d" % count)  # แสดงจำนวน things
