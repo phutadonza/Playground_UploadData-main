@@ -10,8 +10,8 @@ import os
 load_dotenv()
 
 # อ่านค่า environment variables
-API_test = os.getenv('API_KEY_TEST')
-SERVER_test = os.getenv('SERVER_URL_TEST')
+API_test = os.getenv('API_TEST')
+SERVER_test = os.getenv('SERVER_TEST')
 
 # ตรวจสอบว่า SERVER_test และ API_test ไม่เป็น None
 if not SERVER_test or not API_test:
