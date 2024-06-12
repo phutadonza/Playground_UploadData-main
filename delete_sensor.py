@@ -1,66 +1,61 @@
-import csv
 import requests
-import json
+from dotenv import load_dotenv
 import os
-import threading
-from host.server import SERVER
-from host.api import API
 
-def ค้นหาsensorId(รายละเอียด, headers):
-    url = f"{SERVER}/core/api/streaming/v1.1/Sensors?$filter=name eq '{รายละเอียด['CAMERA_NAME']}'"
-    response = requests.request("GET", url, headers=headers)
-    if response.status_code == 200:
-        results = response.json()
-        if results["value"]:
-            return results["value"][0]["@iot.id"]
-    print(f"ไม่พบเซ็นเซอร์สำหรับ {รายละเอียด['CAMERA_NAME']}")
-    return None
+# โหลดค่า environment variables จากไฟล์ .env
+load_dotenv()
 
-def ลบเซ็นเซอร์(sensor_id, headers):
-    url = f"{SERVER}/core/api/streaming/v1.1/Sensors({sensor_id})"
-    
-    while True:
-        response = requests.request("DELETE", url, headers=headers)
-        if response.status_code == 200 or response.status_code == 204:
-            print(f"ลบเซ็นเซอร์ {sensor_id} เรียบร้อยแล้ว")
-            break
-        else:
-            print(f"เกิดข้อผิดพลาดขณะลบเซ็นเซอร์ {sensor_id}: {response.text}")
-            continue
+# อ่านค่า environment variables
+API_test = os.getenv('API_TEST')
+SERVER_test = os.getenv('SERVER_TEST')
 
-def ลบเซ็นเซอร์จากCSV(file_path, headers):
-    if os.path.isfile(file_path):
-        with open(file_path, encoding='utf-8') as csv_file:
-            csv_reader = csv.DictReader(csv_file)
-            for row in csv_reader:
-                sensor_id = ค้นหาsensorId(row, headers)
-                if sensor_id:
-                    print(f"เซ็นเซอร์ที่จะลบ: {row['CAMERA_NAME']} (ID: {sensor_id})")
-                    confirm = input("พิมพ์ 'del' เพื่อยืนยันการลบ: ")
-                    if confirm.lower() == 'del':
-                        ลบเซ็นเซอร์(sensor_id, headers)
-                    else:
-                        print("ยกเลิกการลบเซ็นเซอร์นี้")
+# ตรวจสอบว่า SERVER_test และ API_test ไม่เป็น None
+if not SERVER_test or not API_test:
+    raise ValueError("SERVER_URL_TEST หรือ API_KEY_TEST ไม่ได้ถูกตั้งค่าในไฟล์ .env")
 
-# เส้นทางไปยังไฟล์ CSV ที่มีรายชื่อเซ็นเซอร์ที่ต้องการลบ
-csv_file_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out\ชื่อไฟล์ของคุณ.csv'
-
+# ตั้งค่า headers สำหรับ API
 headers = {
-    'API-Key': API,
+    'API-Key': API_test,
     'Content-Type': 'application/json'
 }
 
-def งานลบเซ็นเซอร์():
-    ลบเซ็นเซอร์จากCSV(csv_file_path, headers)
+def get_sensor_by_name(sensor_name, headers):
+    url = f"{SERVER_test}/core/api/streaming/v1.1/Sensors"
+    params = {
+        'name': sensor_name
+    }
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        sensors = response.json()
+        if sensors['value']:
+            return sensors['value'][0]
+        else:
+            print(f"Sensor '{sensor_name}' not found.")
+            return None
+    else:
+        print(f"Error fetching sensor: {response.text}")
+        return None
 
-# สร้างเธรดสำหรับงานลบเซ็นเซอร์
-thread = threading.Thread(target=งานลบเซ็นเซอร์)
+def delete_sensor(sensor_id, headers):
+    url = f"{SERVER_test}/core/api/streaming/v1.1/Sensors({sensor_id})?forever=true"
+    response = requests.delete(url, headers=headers)
+    if response.status_code == 204:
+        print(f"Sensor with ID {sensor_id} successfully deleted.")
+    else:
+        print(f"Error deleting sensor: {response.text}")
 
-# เริ่มเธรด
-thread.start()
+def delete_sensor_by_name(sensor_name):
+    sensor = get_sensor_by_name(sensor_name, headers)
+    if sensor:
+        print(f"Sensor found: {sensor}")
+        confirm = input("Type 'del' to confirm deletion: ")
+        if confirm.lower() == 'del':
+            delete_sensor(sensor['@iot.id'], headers)
+        else:
+            print("Deletion canceled.")
+    else:
+        print(f"Sensor '{sensor_name}' not found.")
 
-# รอให้เธรดทำงานเสร็จ
-thread.join()
-
-print("ลบเซ็นเซอร์ทั้งหมดเรียบร้อยแล้ว")
-
+# ตัวอย่างการลบเซ็นเซอร์โดยใช้ชื่อเซ็นเซอร์
+sensor_name_to_delete = "ชื่อเซ็นเซอร์ที่ต้องการลบ"
+delete_sensor_by_name(sensor_name_to_delete)
