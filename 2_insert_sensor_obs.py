@@ -10,8 +10,8 @@ import os
 load_dotenv()
 
 # อ่านค่า environment variables
-API_test = os.getenv('API_TEST')
-SERVER_test = os.getenv('SERVER_TEST')
+API_test = os.getenv('API_REAL')
+SERVER_test = os.getenv('SERVER_REAL')
 
 # ตรวจสอบว่า SERVER_test และ API_test ไม่เป็น None
 if not SERVER_test or not API_test:
@@ -136,60 +136,63 @@ def Insert_sensor():
         if os.path.isfile(os.path.join(dir_path, path)):
             print(os.path.join(dir_path, path))
 
-            out_dict = []
-            with open(dir_json, encoding='utf-8') as f:
-                props = json.load(f)
-            with open(os.path.join(dir_path, path), encoding='utf-8') as csv_file:
-                csv_reader = csv.DictReader(csv_file)
-                num_row = 1
-                dt_count = 0
-                for row in csv_reader:
-                    if row["LOCATION_ID"] and row["THING_ID"] and row["FEATUREOFINTEREST_ID"]:
-                        if row["CAMERA_NAME"] not in existing_sensors:
-                            print("num_row = %d" % num_row)
-                            print("sensor = %s" % row["CAMERA_NAME"])
-                            sensorId = createSensor(row, headers)
-                            row["SENSOR_ID"] = sensorId
+            split_txt = os.path.join(dir_path, path).split('\\')
+            name_text = split_txt[-1].split('.')
+            file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out-dt\\{name_text[0]}-dt.csv'
 
-                            for p in props["value"]:
-                                dtDetail = {
-                                    "ThingName": row["POLE_NAME"],
-                                    "ThingId": row["THING_ID"],
-                                    "SensorId": sensorId,
-                                    "PropertyId": p["@iot.id"],
-                                    "PropertyName": p["name"]
-                                }
-                                datastreamId = createDatastream(dtDetail, headers)
-                                if "Live" in p["name"]:
-                                    row["DATASTREAM_ID (Live)"] = datastreamId
-                                    out_dict.append(row)
+            with open(file_save, 'w', encoding='utf-8', newline='') as csvfile:
+                field_names = None
+                writer = None
+
+                with open(dir_json, encoding='utf-8') as f:
+                    props = json.load(f)
+                with open(os.path.join(dir_path, path), encoding='utf-8') as csv_file:
+                    csv_reader = csv.DictReader(csv_file)
+                    num_row = 1
+                    dt_count = 0
+                    for row in csv_reader:
+                        if row["LOCATION_ID"] and row["THING_ID"] and row["FEATUREOFINTEREST_ID"]:
+                            if row["CAMERA_NAME"] not in existing_sensors:
+                                print("num_row = %d" % num_row)
+                                print("sensor = %s" % row["CAMERA_NAME"])
+                                sensorId = createSensor(row, headers)
+                                row["SENSOR_ID"] = sensorId
+
+                                for p in props["value"]:
+                                    dtDetail = {
+                                        "ThingName": row["POLE_NAME"],
+                                        "ThingId": row["THING_ID"],
+                                        "SensorId": sensorId,
+                                        "PropertyId": p["@iot.id"],
+                                        "PropertyName": p["name"]
+                                    }
+                                    datastreamId = createDatastream(dtDetail, headers)
+                                    if "Live" in p["name"]:
+                                        row["DATASTREAM_ID (Live)"] = datastreamId
+                                    
+                                    dt_count += 1
+
+                                num_row += 1
+
+                                if field_names is None:
+                                    field_names = row.keys()
+                                    writer = csv.DictWriter(csvfile, fieldnames=field_names)
+                                    writer.writeheader()
                                 
-                                dt_count += 1
-
-                            num_row += 1
+                                writer.writerow(row)
+                            else:
+                                print(f"Duplicate sensor found: {row['CAMERA_NAME']}")
                         else:
-                            print(f"Duplicate sensor found: {row['CAMERA_NAME']}")
-                    else:
-                        print(f"Missing LOCATION_ID, THING_ID, or FEATUREOFINTEREST_ID in row {num_row}")
+                            print(f"Missing LOCATION_ID, THING_ID, or FEATUREOFINTEREST_ID in row {num_row}")
 
-                print("-------- dt_count = %d" % dt_count)
-            
-            if out_dict:
-                field_names = list(out_dict[0].keys())
-
-                split_txt = os.path.join(dir_path, path).split('\\')
-                name_text = split_txt[-1].split('.')
-                file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out-dt\\{name_text[0]}-dt.csv'
-
-                with open(file_save, 'w', encoding='utf-8') as csvfile:      
-                    writer = csv.DictWriter(csvfile, fieldnames=field_names)
-                    writer.writeheader()
-                    writer.writerows(out_dict)
+                    print("-------- dt_count = %d" % dt_count)
 
 thread1 = threading.Thread(target=Insert_sensor)
 
+# เริ่มการทำงานของ Thread
 thread1.start()
 
+# รอให้ Thread ทำงานเสร็จ
 thread1.join()
 
 print("ทำงานเสร็จสิ้น")
