@@ -61,7 +61,7 @@ def ลบเซ็นเซอร์จากCSV(file_path, headers):
             print("ยกเลิกการลบเซ็นเซอร์ทั้งหมด")
 
 # เส้นทางไปยังไฟล์ CSV ที่มีรายชื่อเซ็นเซอร์ที่ต้องการลบ
-csv_file_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV\สำเนาของ NT_Camera ไม่ได้อัพ_จะอัพ - จะอัพ_3.csv'
+csv_file_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out\NT_Camera_29_01_24_for_me_-_500-out.csv'
 
 headers = {
     'API-Key': API,
