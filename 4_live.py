@@ -6,7 +6,7 @@ from host.api import API
 import os
 
 
-dir_path = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out-dt'  #for edit at home
+dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out-dt'  #for edit at home
 
 # dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out-dt'
 
@@ -34,7 +34,7 @@ for path in os.listdir(dir_path):  #path
             # lat = data._get_value(i,'LAT')
             
             # link = f"http://{ip}:{port}/api/stream.m3u8?src={name}&mp4=flac" ## create link for play in vlc
-            link = f"https://rtc-bkk-bma-ba-2-164.larry-cctv.com/api/stream.mp4?src={name}&mp4=flac" ## create link for play in vlc
+            link = f"https://rtc-bkk-bma-ba-2-165.larry-cctv.com/api/stream.mp4?src={name}&mp4=flac" ## create link for play in vlc
             print(i,link)
             
             payload = json.dumps({
