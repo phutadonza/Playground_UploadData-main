@@ -2,9 +2,9 @@ import os
 import pandas as pd
 import requests
 import time
-from host.server import SERVER
-from host.api import API
 
+SERVER='https://bkk.larry-cctv.com'
+API='k3hqivYfUBAEE7BoL1745jQE4PGS0Vq8CL755gMen1tm1shTatHSkyilgi1YnGGa'
 headers = {
     'API-Key': API,
     'Content-Type': 'application/json'
