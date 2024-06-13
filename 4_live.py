@@ -34,7 +34,7 @@ for path in os.listdir(dir_path):  #path
             # lat = data._get_value(i,'LAT')
             
             # link = f"http://{ip}:{port}/api/stream.m3u8?src={name}&mp4=flac" ## create link for play in vlc
-            link = f"https://rtc-bkk-bma-ba-2-165.larry-cctv.com/api/stream.mp4?src={name}&mp4=flac" ## create link for play in vlc
+            link = f"https://rtc-bkk-bma-ct-1-14.larry-cctv.com/api/stream.mp4?src={name}&mp4=flac" ## create link for play in vlc
             print(i,link)
             
             payload = json.dumps({
