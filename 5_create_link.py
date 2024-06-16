@@ -2,9 +2,9 @@ import os
 import pandas as pd
 
 # ระบุไดเรกทอรีที่เก็บไฟล์ CSV
-dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out-dt'
+dir_path = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out-dt'
 
-save_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\link'
+save_path = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\link'
 
 # สร้างรายการไฟล์ CSV ทั้งหมดในไดเรกทอรี
 csv_files = [f for f in os.listdir(dir_path) if f.endswith('.csv')]
