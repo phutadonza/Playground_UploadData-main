@@ -121,8 +121,8 @@ def createDatastream(dtDetail, headers):
     res_json = response.json()
     return res_json["@iot.id"]
 
-dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out' 
-dir_json = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\cctv2-observedProp.json'
+dir_path = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out' 
+dir_json = r'C:\Users\phuta\Desktop\Playground_UploadData-main\cctv2-observedProp.json'
 
 headers = {
     'API-Key': API_test,
@@ -138,7 +138,7 @@ def Insert_sensor():
 
             split_txt = os.path.join(dir_path, path).split('\\')
             name_text = split_txt[-1].split('.')
-            file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out-dt\\{name_text[0]}-dt.csv'
+            file_save = f'C:\\Users\\phuta\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out-dt\\{name_text[0]}-dt.csv'
 
             with open(file_save, 'w', encoding='utf-8', newline='') as csvfile:
                 field_names = None
@@ -151,7 +151,8 @@ def Insert_sensor():
                     num_row = 1
                     dt_count = 0
                     for row in csv_reader:
-                        if row["LOCATION_ID"] and row["THING_ID"] and row["FEATUREOFINTEREST_ID"]:
+                        if row["LOCATION_ID"] and row["THING_ID"] and row["FEATUREOFINTEREST_ID"] and \
+                           row["LOCATION_ID"] != "DUPLICATE" and row["THING_ID"] != "DUPLICATE" and row["FEATUREOFINTEREST_ID"] != "DUPLICATE":
                             if row["CAMERA_NAME"] not in existing_sensors:
                                 print("num_row = %d" % num_row)
                                 print("sensor = %s" % row["CAMERA_NAME"])
@@ -183,7 +184,7 @@ def Insert_sensor():
                             else:
                                 print(f"Duplicate sensor found: {row['CAMERA_NAME']}")
                         else:
-                            print(f"Missing LOCATION_ID, THING_ID, or FEATUREOFINTEREST_ID in row {num_row}")
+                            print(f"Missing or duplicate LOCATION_ID, THING_ID, or FEATUREOFINTEREST_ID in row {num_row}")
 
                     print("-------- dt_count = %d" % dt_count)
 
