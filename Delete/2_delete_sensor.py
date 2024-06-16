@@ -70,7 +70,7 @@ def ค้นหาเซ็นเซอร์จากCSV(file_path, headers):
         print("ไม่พบเซ็นเซอร์ใดๆในไฟล์ CSV")
 
 # เส้นทางไปยังไฟล์ CSV ที่มีรายชื่อเซ็นเซอร์ที่ต้องการค้นหา
-csv_file_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\link\แก้.csv'
+csv_file_path = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV\Camera_In_Vallaris-Larry_BKK - Delete.csv'
 
 headers = {
     'API-Key': API,
