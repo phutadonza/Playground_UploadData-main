@@ -17,7 +17,7 @@ def post_observation(api_url, datastream_id, headers):
     # print(response.status_code, response.text)
 
 # อ่านไฟล์ CSV
-directory = r"C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out-dt"  # ระบุ path ไปยังไดเรกทอรี่ที่เก็บไฟล์ CSV
+directory = r"C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out-dt"  # ระบุ path ไปยังไดเรกทอรี่ที่เก็บไฟล์ CSV
 api_base_url = f"{SERVER}/core/api/streaming/v1.1"
 headers = {
     'Content-Type': 'application/json',
