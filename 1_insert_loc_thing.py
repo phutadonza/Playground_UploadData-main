@@ -20,11 +20,11 @@ print(SERVER_REAL, API_REAL)
 top = 10000
 skip = 0
 things_count = 10539
-output_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-all'
+output_dir = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-all'
 output_file = os.path.join(output_dir, 'things_data.csv')
-compare_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
-check_before_up_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CHECK BEFORE UP'
-dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
+compare_dir = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
+check_before_up_dir = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CHECK BEFORE UP'
+dir_path = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
 
 # ตั้งค่า headers สำหรับ API
 headers = {
@@ -185,13 +185,16 @@ def createFeatureOfInterest(cctvDetail , headers):
 
 # ฟังก์ชันสำหรับเพิ่มข้อมูล POLE
 def Insert_pole():
+    pole_cache = {}
+    pole_count = 0  # ตัวนับจำนวนเสาที่ถูกสร้างขึ้น
+
     for path in os.listdir(dir_path):  # path ของไฟล์ CSV
         if os.path.isfile(os.path.join(dir_path, path)):
             print('test', os.path.join(dir_path, path))  # ตรวจสอบ path
 
             split_txt = os.path.join(dir_path, path).split('\\')
             name_text = split_txt[-1].split('.')
-            file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out\\{name_text[0]}-out.csv'
+            file_save = f'C:\\Users\\phuta\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out\\{name_text[0]}-out.csv'
             completeName = os.path.join(file_save)
             
             with open(completeName, 'w', encoding='utf-8', newline='') as output_csvfile:
@@ -201,30 +204,18 @@ def Insert_pole():
                 with open(os.path.join(dir_path, path), encoding='utf-8') as csv_file:
                     csv_reader = csv.DictReader(csv_file)
                     count = 0
-                    prev_name = ''
-                    locationid = ''
-                    thingid = ''
-                    featureid = ''
                     i = 1
 
-                    for row in csv_reader:
-                        print("----- i =", i)
-
-                        if row['POLE_NAME'] != prev_name:
-                            prev_name = row['POLE_NAME']
-
-                            # ตรวจสอบว่าชื่อ POLE_NAME มีอยู่ใน things data หรือไม่
-                            if row['POLE_NAME'] in things_df['name'].values:
-                                # บันทึกข้อมูลที่ซ้ำกันลงในไฟล์ CSV
-                                match_file_path = os.path.join(check_before_up_dir, 'poleซ้ำกล้องไม่แอด.csv')
-                                with open(match_file_path, mode='a', newline='', encoding='utf-8') as file:
-                                    match_writer = csv.writer(file)
-                                    if os.path.getsize(match_file_path) == 0:
-                                        match_writer.writerow(['POLE_NAME', 'LON', 'LAT'])  # เขียน header ถ้าไฟล์ว่าง
-                                    match_writer.writerow([row['POLE_NAME'], row['LON'], row['LAT']])
-                                print(f"Duplicate found: {row['POLE_NAME']} not added.")
-                                continue
-
+                    # เตรียมตรวจสอบ POLE_NAME ที่ซ้ำกัน
+                    rows = list(csv_reader)
+                    for row in rows:
+                        if row['POLE_NAME'] in things_df['name'].values:
+                            pole_cache[row['POLE_NAME']] = {
+                                "LOCATION_ID": "DUPLICATE",
+                                "THING_ID": "DUPLICATE",
+                                "FEATUREOFINTEREST_ID": "DUPLICATE"
+                            }
+                        elif row['POLE_NAME'] not in pole_cache:
                             # สร้าง location
                             out = createLocation(row, headers)
                             locationid = out['LOCATION_ID']
@@ -237,18 +228,16 @@ def Insert_pole():
                             out = createFeatureOfInterest(out, headers)
                             featureid = out["FEATUREOFINTEREST_ID"]
 
-                            row.update({
+                            pole_cache[row['POLE_NAME']] = {
                                 "LOCATION_ID": locationid,
                                 "THING_ID": thingid,
                                 "FEATUREOFINTEREST_ID": featureid
-                            })
+                            }
+                            pole_count += 1  # เพิ่มตัวนับเมื่อสร้างเสาใหม่
 
-                        else:
-                            row.update({
-                                "LOCATION_ID": locationid,
-                                "THING_ID": thingid,
-                                "FEATUREOFINTEREST_ID": featureid
-                            })
+                    for row in rows:
+                        if row['POLE_NAME'] in pole_cache:
+                            row.update(pole_cache[row['POLE_NAME']])
 
                         if field_names is None:
                             field_names = row.keys()
@@ -259,6 +248,9 @@ def Insert_pole():
                         i += 1
                 
                 print("-------- thing count = %d" % count)  # แสดงจำนวน things
+
+    # แสดงจำนวนเสาที่ถูกสร้างใน terminal
+    print(f"Total Poles Created: {pole_count}")
 
 # สร้าง Thread สำหรับฟังก์ชัน Insert_pole
 thread1 = threading.Thread(target=Insert_pole)
