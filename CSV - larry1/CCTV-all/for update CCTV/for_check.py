@@ -9,7 +9,7 @@ base_url = 'https://bkk.larry-cctv.com/core/api/streaming/v1.1/Things'
 top = 10000
 skip = 0
 things_count = 15000
-output_dir = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-all'
+output_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-all'
 output_file = os.path.join(output_dir, 'things_data.csv')
 duplicates_file = os.path.join(output_dir, 'duplicates_data.csv')
 
