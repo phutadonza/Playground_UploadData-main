@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # ตั้งค่าไดเรกทอรีและชื่อไฟล์
-output_dir = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-all'
+output_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-all'
 things_file = os.path.join(output_dir, 'things_data.csv')
 sheet_file = os.path.join(output_dir, 'sheet_data.csv')
 unique_pole_names_file = os.path.join(output_dir, 'unique_pole_names.csv')
