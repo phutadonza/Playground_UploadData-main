@@ -5,7 +5,7 @@ from host.server import SERVER
 from host.api import API
 import os
 
-dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out-dt'  #for edit at home
+dir_path = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-out-dt'  #for edit at home
 
 for path in os.listdir(dir_path):  #path
     if os.path.isfile(os.path.join(dir_path, path)):

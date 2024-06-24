@@ -20,11 +20,11 @@ print(SERVER_REAL, API_REAL)
 top = 10000
 skip = 0
 things_count = 10539
-output_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-all'
+output_dir = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV-all'
 output_file = os.path.join(output_dir, 'things_data.csv')
-compare_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
-check_before_up_dir = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CHECK BEFORE UP'
-dir_path = r'C:\Users\phutadon\OneDrive\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
+compare_dir = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
+check_before_up_dir = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CHECK BEFORE UP'
+dir_path = r'C:\Users\phuta\Desktop\Playground_UploadData-main\CSV - larry1\CCTV'
 
 # ตั้งค่า headers สำหรับ API
 headers = {
@@ -194,7 +194,7 @@ def Insert_pole():
 
             split_txt = os.path.join(dir_path, path).split('\\')
             name_text = split_txt[-1].split('.')
-            file_save = f'C:\\Users\\phutadon\\OneDrive\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out\\{name_text[0]}-out.csv'
+            file_save = f'C:\\Users\\phuta\\Desktop\\Playground_UploadData-main\\CSV - larry1\\CCTV-out\\{name_text[0]}-out.csv'
             completeName = os.path.join(file_save)
             
             with open(completeName, 'w', encoding='utf-8', newline='') as output_csvfile:
